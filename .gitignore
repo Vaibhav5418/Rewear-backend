@@ -1,0 +1,11 @@
+# Ignore node modules
+node_modules/
+
+# Ignore environment files
+.env
+
+# Ignore image uploads (optional, if using local upload)
+uploads/
+
+# Optional: logs or other sensitive files
+*.log
