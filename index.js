@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ CORS setup — allow only frontend origin (important in production)
 app.use(cors({
-  origin: "https://your-frontend.vercel.app", // 🔁 Replace with your actual Vercel URL
+  origin: "https://rewear-frontend-tau.vercel.app/", // 🔁 Replace with your actual Vercel URL
   credentials: true
 }));
 
