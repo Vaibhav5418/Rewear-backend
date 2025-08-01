@@ -9,13 +9,12 @@ const itemRoutes = require("./routes/itemRoutes");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
+const BASE_URL = process.env.BASE_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
-// ✅ CORS setup — allow only frontend origin (important in production)
-app.use(cors({
-  origin: "https://rewear-frontend-tau.vercel.app/", // 🔁 Replace with your actual Vercel URL
-  credentials: true
-}));
+app.use(cors({ origin: process.env.FRONTEND_URL }));
+
 
 // ✅ Middleware
 app.use(express.json());
@@ -32,5 +31,5 @@ mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
-  app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Server running at ${BASE_URL.replace('/api', '')}`));
 }).catch(err => console.error("❌ MongoDB connection error:", err));
