@@ -13,6 +13,10 @@ const itemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  points: {
+    type: Number,
+    required: true,
+  },
   status: {
     type: String,
     enum: ["available", "swapped", "pending", "redeemed"],
