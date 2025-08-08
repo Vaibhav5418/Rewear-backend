@@ -3,7 +3,7 @@ const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
 
-router.get("/:id", async (req, res) => {
+router.get("/profile/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("name email");
     if (!user) return res.status(404).json({ message: "User not found" });
