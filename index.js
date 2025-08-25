@@ -13,8 +13,24 @@ const PORT = process.env.PORT || 5000;
 const BASE_URL = process.env.BASE_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-// CORS: allow configured frontend, otherwise default to all in development
-app.use(cors({ origin: FRONTEND_URL || '*', credentials: true }));
+// CORS: allowlist support (comma-separated env FRONTEND_URLS or single FRONTEND_URL)
+const ALLOWED_ORIGINS = (process.env.FRONTEND_URLS || FRONTEND_URL || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // allow non-browser or same-origin requests (e.g. curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.length === 0) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
 
 
 // ✅ Middleware
