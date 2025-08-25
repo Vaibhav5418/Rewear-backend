@@ -19,18 +19,33 @@ const ALLOWED_ORIGINS = (process.env.FRONTEND_URLS || FRONTEND_URL || '')
   .map(s => s.trim())
   .filter(Boolean);
 
-app.use(cors({
+const isOriginAllowed = (origin) => {
+  if (!origin) return true; // non-browser or same-origin
+  if (ALLOWED_ORIGINS.length === 0) return true; // allow all if unset
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  // wildcard support: entries like https://*.vercel.app
+  for (const pattern of ALLOWED_ORIGINS) {
+    if (pattern.includes('*')) {
+      const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp('^' + escapeRegex(pattern).replace('\\*', '.*') + '$');
+      if (regex.test(origin)) return true;
+    }
+  }
+  return false;
+};
+
+const corsOptions = {
   origin: (origin, callback) => {
-    // allow non-browser or same-origin requests (e.g. curl, server-to-server)
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.length === 0) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
+    if (isOriginAllowed(origin)) return callback(null, true);
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 
 // ✅ Middleware
