@@ -9,11 +9,12 @@ const itemRoutes = require("./routes/itemRoutes");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const BASE_URL = process.env.BASE_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-app.use(cors({ origin: process.env.FRONTEND_URL }));
+// CORS: allow configured frontend, otherwise default to all in development
+app.use(cors({ origin: FRONTEND_URL || '*', credentials: true }));
 
 
 // ✅ Middleware
@@ -31,5 +32,6 @@ mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
-  app.listen(PORT, () => console.log(`🚀 Server running at ${BASE_URL.replace('/api', '')}`));
+  const displayUrl = BASE_URL ? BASE_URL.replace('/api', '') : `http://localhost:${PORT}`;
+  app.listen(PORT, () => console.log(`🚀 Server running at ${displayUrl}`));
 }).catch(err => console.error("❌ MongoDB connection error:", err));

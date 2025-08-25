@@ -131,6 +131,15 @@ router.put("/approve/:id", authMiddleware, adminMiddleware, updateItemApproval);
 router.post("/swap/:id", authMiddleware, handleSwapOrRedeem);
 
 // Get single item by ID with better error handling
+// Health check route for debugging
+router.get("/health/check", (req, res) => {
+  res.json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    cloudinary: cloudinary.config().cloud_name ? "Connected" : "Not configured"
+  });
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -156,15 +165,6 @@ router.get("/:id", async (req, res) => {
     
     res.status(500).json({ message: "Server error" });
   }
-});
-
-// Health check route for debugging
-router.get("/health/check", (req, res) => {
-  res.json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    cloudinary: cloudinary.config().cloud_name ? "Connected" : "Not configured"
-  });
 });
 
 module.exports = router;
