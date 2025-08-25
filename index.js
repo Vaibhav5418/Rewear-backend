@@ -45,8 +45,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Handle CORS preflight for all routes
-app.options('*', cors(corsOptions));
+// Handle CORS preflight without registering a wildcard path (Express 5 path-to-regexp fix)
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 
 // ✅ Middleware
